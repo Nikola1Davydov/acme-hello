@@ -1,0 +1,15 @@
+{
+  "id": "acme.hello",
+  "version": "1.0.0",
+  "description": "Пробное расширение для проверки конвейера публикации.",
+  "publisher": "Acme Test",
+  "updateFeed": "github:Nikola1Davydov/acme-hello",
+  "entryAssembly": "Acme.Hello.dll",
+  "ui": {
+    "button": {
+      "name": "Hello Test",
+      "tooltip": "Проверка конвейера публикации",
+      "command": "acme.hello.Hello"
+    }
+  }
+}

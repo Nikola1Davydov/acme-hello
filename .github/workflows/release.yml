@@ -1,0 +1,33 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Test phase only: build the AnalyseTool.Sdk nupkg (with the PackExtension pipeline)
+      # straight from the AnalyzeTool branch. Delete these two steps once the Sdk is on nuget.org.
+      - uses: actions/checkout@v4
+        with:
+          repository: Nikola1Davydov/AnalyzeTool
+          ref: feature/extension-manager-foundation
+          path: analyzetool
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Pack AnalyseTool.Sdk into the local feed
+        run: dotnet pack analyzetool/src/AnalyseTool.Sdk/AnalyseTool.Sdk.csproj -c "Release R25" -p:GeneratePackageOnBuild=false -o packages
+
+      - name: Pack the extension for all Revit years
+        run: dotnet build -t:PackExtension
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
